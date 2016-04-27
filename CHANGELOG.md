@@ -1,4 +1,15 @@
-## Master
+## v69
+
+* Fixed a bug in system.properties detection
+
+## v68
+
+* Removed default JAVA_OPTS from bin/release
+* Added support for sbt.project config
+
+## v66
+
+* Added support for SBT 0.13.11
 
 ## v63
 

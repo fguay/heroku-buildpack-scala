@@ -62,7 +62,18 @@ _has_buildPropertiesFile() {
 
 _has_playConfig() {
   local ctxDir=$1
-  test -e $ctxDir/conf/application.conf
+  test -e $ctxDir/conf/application.conf ||
+      test "$IS_PLAY_APP" = "true" ||
+      (test -n "$PLAY_CONF_FILE" &&
+          test -e "$PLAY_CONF_FILE" &&
+          test "$IS_PLAY_APP" != "false") ||
+      (# test for default Play 2.3 and 2.4 setup.
+          test -d $ctxDir/project &&
+          test -r $ctxDir/project/plugins.sbt &&
+          test -n "$(grep "addSbtPlugin(\"com.typesafe.play\" % \"sbt-plugin\"" $ctxDir/project/plugins.sbt | grep -v ".*//.*addSbtPlugin")" &&
+          test -r $ctxDir/build.sbt &&
+          test -n "$(grep "enablePlugins(Play" $ctxDir/build.sbt | grep -v ".*//.*enablePlugins(Play")" &&
+          test "$IS_PLAY_APP" != "false")
 }
 
 _has_playPluginsFile() {
@@ -121,7 +132,7 @@ get_supported_sbt_version() {
   local ctxDir=$1
   if _has_buildPropertiesFile $ctxDir; then
     sbtVersionLine="$(grep -P '[ \t]*sbt\.version[ \t]*=' "${ctxDir}"/project/build.properties | sed -E -e 's/[ \t\r\n]//g')"
-    sbtVersion=$(expr "$sbtVersionLine" : 'sbt\.version=\(0\.1[1-3]\.[0-9]\(-[a-zA-Z0-9_]*\)*\)$')
+    sbtVersion=$(expr "$sbtVersionLine" : 'sbt\.version=\(0\.1[1-3]\.[0-9]*\(-[a-zA-Z0-9_]*\)*\)$')
     if [ "$sbtVersion" != 0 ] ; then
       echo "$sbtVersion"
     else
