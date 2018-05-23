@@ -54,7 +54,7 @@ mkdir -p $CACHE_DIR
 
 #patch to embed sass in build (https://groups.google.com/forum/#!topic/play-framework/fzGj5RqW-l8)
 mkdir -p $CACHE_DIR/.gems
-gem uninstall -i $CACHE_DIR/.gems sass compass
+gem uninstall -a -i $CACHE_DIR/.gems sass compass
 gem install -i $CACHE_DIR/.gems --no-rdoc sass compass
 export PATH=$PATH:$CACHE_DIR/.gems/bin
 export GEM_PATH=$GEM_PATH:$CACHE_DIR/.gems
